@@ -1,0 +1,53 @@
+# Служба разноски транспортных документов Saby → 1С.
+#
+# Установка:
+#   sudo cp deploy/transport-documents.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now transport-documents
+#
+# Логи: journalctl -u transport-documents -f
+# Плюс файл с суточной ротацией, если задан LOG_FILE.
+
+[Unit]
+Description=Разноска транспортных документов Saby в 1С
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=transport-documents
+Group=transport-documents
+WorkingDirectory=/opt/transport-documents
+# EnvironmentFile здесь НЕТ намеренно. Приложение само читает .env из рабочего
+# каталога, а systemd разбирает такие файлы по своим правилам: символы # $ %
+# в значениях он трактует особо. В пароле 1С они есть, и подстановка исказила бы
+# его молча — отказ выглядел бы как «1С не принимает учётку», и причину искали бы
+# не там. Здесь задаём только то, что нужно самой команде запуска.
+Environment=APP_HOST=service.example.invalid
+Environment=APP_PORT=8000
+
+# ОДИН рабочий процесс, и это не предпочтение, а требование. Блокировка
+# одновременных прогонов и сессии формы подтверждения живут в памяти процесса:
+# со вторым воркером два прогона пойдут разом, оба будут писать состояние и
+# оба смогут писать в 1С.
+ExecStart=/opt/transport-documents/.venv/bin/python -m uvicorn main:app \
+    --host ${APP_HOST} --port ${APP_PORT} --workers 1
+
+Restart=on-failure
+RestartSec=10
+TimeoutStopSec=30
+
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectSystem=full
+ProtectHome=read-only
+UMask=0077
+
+# Каталоги, в которые сервис пишет: состояние прогона, партия подтверждений,
+# журнал решений, отчёты, логи. Всё остальное дерево остаётся только для чтения.
+ReadWritePaths=/opt/transport-documents/state
+ReadWritePaths=/opt/transport-documents/reports
+ReadWritePaths=/opt/transport-documents/logs
+
+[Install]
+WantedBy=multi-user.target

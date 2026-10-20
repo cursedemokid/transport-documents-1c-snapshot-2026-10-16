@@ -1,0 +1,6 @@
+# Зависимости только для тестов. Сами тесты написаны на стандартном unittest,
+# httpx нужен fastapi.testclient для прогона приложения на реальном ASGI-стеке.
+-r requirements.txt
+httpx==0.28.1
+# Замер покрытия: python -m coverage run --source=app -m unittest discover -s tests -t .
+coverage==7.6.10
