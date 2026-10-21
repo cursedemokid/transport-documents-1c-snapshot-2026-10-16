@@ -350,7 +350,7 @@ class ResendTests(ConfirmFormTests):
     def test_unknown_address_is_told_plainly(self):
         self._open_batch()
         with self._client() as client:
-            response = client.post("/confirm/resend", data={"email": "developer@example.com"})
+            response = client.post("/confirm/resend", data={"email": "unlisted@example.invalid"})
 
         self.assertIn("Не отправлено", response.text)
         self.assertEqual([], [line for line in self._journal() if '"повторная отправка"' in line])
@@ -374,8 +374,8 @@ class ResendTests(ConfirmFormTests):
         """
         self._open_batch()
         with self._client() as client:
-            first = client.post("/confirm/resend", data={"email": "developer@example.com"})
-            second = client.post("/confirm/resend", data={"email": "developer@example.com"})
+            first = client.post("/confirm/resend", data={"email": "unlisted@example.invalid"})
+            second = client.post("/confirm/resend", data={"email": "unlisted@example.invalid"})
 
         self.assertIn("не получает отчёты", first.text)
         self.assertIn("запрос уже был", second.text)
@@ -468,13 +468,13 @@ class KnownRequesterTests(ConfirmFormTests):
             client.post(
                 "/confirm/preview",
                 data={"selected": "000", "choice_000": expense().ref,
-                      "email": "developer@example.com"},
+                      "email": "unlisted@example.invalid"},
             )
             client.post("/confirm/apply", data={"apply_000": expense().ref})
 
         entry = [line for line in self._journal() if '"подтверждение"' in line][0]
         self.assertIn(RECIPIENT, entry)
-        self.assertNotIn("developer@example.com", entry)
+        self.assertNotIn("unlisted@example.invalid", entry)
 
     def test_journal_says_how_the_address_was_established(self):
         self._open_batch()
@@ -521,7 +521,7 @@ class AttributionTests(ConfirmFormTests):
             self._logged_in(client)
             response = client.post(
                 "/confirm/preview",
-                data={"selected": "000", "choice_000": expense().ref, "email": "developer@example.com"},
+                data={"selected": "000", "choice_000": expense().ref, "email": "unlisted@example.invalid"},
             )
 
         self.assertIn("Введите адрес почты", response.text)
@@ -533,7 +533,7 @@ class AttributionTests(ConfirmFormTests):
             self._logged_in(client)
             response = client.post(
                 "/confirm/preview",
-                data={"selected": "000", "choice_000": expense().ref, "email": "developer@example.com"},
+                data={"selected": "000", "choice_000": expense().ref, "email": "unlisted@example.invalid"},
             )
 
         for hint in ("рассылк", "списк", "отчёт приходит"):
@@ -545,12 +545,12 @@ class AttributionTests(ConfirmFormTests):
             self._logged_in(client)
             client.post(
                 "/confirm/preview",
-                data={"selected": "000", "choice_000": expense().ref, "email": "developer@example.com"},
+                data={"selected": "000", "choice_000": expense().ref, "email": "unlisted@example.invalid"},
             )
 
         entries = [line for line in self._journal() if '"адрес отклонён"' in line]
         self.assertEqual(1, len(entries))
-        self.assertIn("developer@example.com", entries[0])
+        self.assertIn("unlisted@example.invalid", entries[0])
 
     def test_known_address_reaches_the_preview(self):
         with self._client() as client:
@@ -618,7 +618,7 @@ class ApplyTests(ConfirmFormTests):
         self.assertIn("заполнили вручную", response.text)
 
     def test_foreign_ref_is_refused(self):
-        response, repository = self._apply(ref="7e9061fe-d89a-55c4-a8c8-495cf7b0050b")
+        response, repository = self._apply(ref="00000000-0000-4000-8000-000000000999")
 
         self.assertEqual(0, repository.write_calls)
         self.assertIn("не относится к этому предложению", response.text)

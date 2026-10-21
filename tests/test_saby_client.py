@@ -453,7 +453,7 @@ class SessionFileTests(NetworkGuardTestCase):
     class _FakeManager:
         """Повторяет поведение SABYManager: создаёт базу прямо в конструкторе."""
 
-        def __init__(self, login, REDACTED):
+        def __init__(self, login, password):
             self.login = login
             self.db_file = "/несуществующий/каталог/saby_manager.db"
             self._init_db()
@@ -570,7 +570,7 @@ class DuplicateDocumentTests(NetworkGuardTestCase):
             [{"result": {
                 "События": [
                     self._doc("7e9061fe-d89a-55c4-a8c8-495cf7b0050b", "первый"),
-                    self._doc("7e9061fe-d89a-55c4-a8c8-495cf7b0050b", "второй"),
+                    self._doc("00000000-0000-4000-8000-000000000002", "второй"),
                 ],
                 "Навигация": {"HasMore": False}}}]
         )

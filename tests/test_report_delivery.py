@@ -7,6 +7,8 @@
 import unittest
 from datetime import date
 from pathlib import Path
+import os
+import stat
 from tempfile import TemporaryDirectory
 from unittest import mock
 
@@ -197,8 +199,9 @@ class AttachmentTests(NetworkGuardTestCase):
                 smtp_max_attachment_mb=1,
             )
             service = ReportService(settings)
+            original_stat = Path.stat
             with mock.patch("smtplib.SMTP") as smtp_class, mock.patch.object(
-                Path, "stat", side_effect=lambda *a, **k: mock.Mock(st_size=50 * 1024 * 1024)
+                Path, "stat", autospec=True, side_effect=lambda path, *a, **k: os.stat_result((stat.S_IFREG | 0o600, 0, 0, 1, 0, 0, 50 * 1024 * 1024, 0, 0, 0)) if path.suffix == ".xlsx" else original_stat(path, *a, **k)
             ):
                 delivery = service.send(_report())
 

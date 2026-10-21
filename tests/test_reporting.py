@@ -161,7 +161,7 @@ class XlsxFileTests(NetworkGuardTestCase):
 
     def test_markup_and_ampersands_are_escaped(self):
         report = _response(
-            [SyncItemResult(status="technical_error", message='ООО «Пример» <не найден> \'кавычка\'')]
+            [SyncItemResult(status="technical_error", message='ООО «Пример & Партнёр» <не найден> \'кавычка\'')]
         )
 
         sheet = self._sheet_text(report)

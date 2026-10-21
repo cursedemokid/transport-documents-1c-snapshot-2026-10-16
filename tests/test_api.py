@@ -115,7 +115,7 @@ class SyncRunGuardTests(ApiTests):
     def test_wrong_key_is_rejected(self):
         with self._stub_service(), self._client(sync_api_key=API_KEY) as client:
             response = client.post(
-                "/sync/run", json={"send_report": False}, headers={"X-API-Key": "demo-credential"}
+                "/sync/run", json={"send_report": False}, headers={"X-API-Key": "wrong-demo-credential"}
             )
 
         self.assertEqual(401, response.status_code)

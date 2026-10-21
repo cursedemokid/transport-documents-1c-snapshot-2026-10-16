@@ -192,7 +192,7 @@ def _worksheet_xml(rows: list[list[str]]) -> str:
 
     return (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-        '<worksheet xmlns="http://internal.internal.internal.example.invalid/spreadsheetml/2006/main">'
+        '<worksheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main">'
         f'<sheetData>{"".join(row_xml)}</sheetData>'
         "</worksheet>"
     )
@@ -209,7 +209,7 @@ def _column_name(index: int) -> str:
 def _content_types_xml() -> str:
     return (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-        '<Types xmlns="http://internal.internal.internal.example.invalid/package/2006/content-types">'
+        '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
         '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
         '<Default Extension="xml" ContentType="application/xml"/>'
         '<Override PartName="/xl/workbook.xml" '
@@ -223,8 +223,8 @@ def _content_types_xml() -> str:
 def _root_rels_xml() -> str:
     return (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-        '<Relationships xmlns="http://internal.internal.internal.example.invalid/package/2006/relationships">'
-        '<Relationship Id="rId1" Type="http://internal.internal.internal.example.invalid/officeDocument/2006/relationships/officeDocument" '
+        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" '
         'Target="xl/workbook.xml"/>'
         "</Relationships>"
     )
@@ -233,8 +233,8 @@ def _root_rels_xml() -> str:
 def _workbook_xml() -> str:
     return (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-        '<workbook xmlns="http://internal.internal.internal.example.invalid/spreadsheetml/2006/main" '
-        'xmlns:r="http://internal.internal.internal.example.invalid/officeDocument/2006/relationships">'
+        '<workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" '
+        'xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships">'
         '<sheets><sheet name="Report" sheetId="1" r:id="rId1"/></sheets>'
         "</workbook>"
     )
@@ -243,8 +243,8 @@ def _workbook_xml() -> str:
 def _workbook_rels_xml() -> str:
     return (
         '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>'
-        '<Relationships xmlns="http://internal.internal.internal.example.invalid/package/2006/relationships">'
-        '<Relationship Id="rId1" Type="http://internal.internal.internal.example.invalid/officeDocument/2006/relationships/worksheet" '
+        '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+        '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" '
         'Target="worksheets/sheet1.xml"/>'
         "</Relationships>"
     )

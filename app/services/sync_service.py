@@ -16,6 +16,7 @@ from app.services.one_s_repository import OneSRepository, OrderLookup
 from app.services.reporting import ReportService
 from app.services.confirmations import ConfirmationStore, PendingItem, hash_code
 from app.services.sync_state import SyncStateStore
+from app.services.run_guard import RUN_LOCK, SyncAlreadyRunningError
 from app.services.validation import ValidationContext, validate_before_write
 from app.utils.dates import default_window
 from app.utils.normalization import clean_text
@@ -104,6 +105,14 @@ class SyncService:
     # --- Прогон -------------------------------------------------------------
 
     def run(self, request: SyncRunRequest) -> SyncRunResponse:
+        if not RUN_LOCK.acquire(blocking=False):
+            raise SyncAlreadyRunningError("Синхронизация уже выполняется.")
+        try:
+            return self._run(request)
+        finally:
+            RUN_LOCK.release()
+
+    def _run(self, request: SyncRunRequest) -> SyncRunResponse:
         request_id = str(uuid4())
         date_from, date_to = self._resolve_period(request)
         writes_enabled = self._settings.one_s_writes_enabled
