@@ -141,7 +141,7 @@ class SupplierOrderMappingTests(NetworkGuardTestCase):
     def test_base_document_presentation_with_parentheses(self):
         order = _orders()["ТД000001075"]
 
-        self.assertEqual(order.base_document.number, "1938870207")
+        self.assertEqual(order.base_document.number, "3057353485")
         self.assertEqual(order.base_document.date, date(2026, 4, 15))
 
 

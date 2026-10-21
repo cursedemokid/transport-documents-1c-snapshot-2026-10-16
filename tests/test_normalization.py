@@ -10,30 +10,30 @@ class PartyNameTests(NetworkGuardTestCase):
     def test_strips_service_note_and_legal_form(self):
         """Реальный случай: в 1С к наименованию дописана пометка о сверке."""
         self.assertEqual(normalize_party_name("ВЕКТОР ООО (сверен на 31.12.2025)"), "вектор")
-        self.assertEqual(normalize_party_name('ООО «Пример»'), "вектор")
+        self.assertEqual(normalize_party_name('ООО «Вектор»'), "вектор")
 
     def test_dirty_and_clean_names_match_exactly(self):
         similarity = party_name_similarity(
             "ВЕКТОР ООО (сверен на 31.12.2025)",
-            'ООО «Пример»',
+            'ООО «Вектор»',
         )
 
         self.assertEqual(similarity, 1.0)
 
     def test_different_counterparties_score_low(self):
-        similarity = party_name_similarity("ВЕКТОР ООО «Пример»Дельта логистик ООО")
+        similarity = party_name_similarity("ВЕКТОР ООО", "Дельта логистик ООО")
 
         self.assertLess(similarity, 0.85)
 
     def test_multiword_name_survives_punctuation(self):
         self.assertEqual(
             normalize_party_name("Дельта логистик ООО"),
-            normalize_party_name('ООО «Пример»'),
+            normalize_party_name('ООО «Дельта логистик»'),
         )
 
     def test_empty_names_score_zero(self):
         self.assertEqual(party_name_similarity(None, "ВЕКТОР"), 0.0)
-        self.assertEqual(party_name_similarity("ООО «Пример»ВЕКТОР"), 0.0)
+        self.assertEqual(party_name_similarity("ВЕКТОР", None), 0.0)
 
 
 class StoredDateTests(NetworkGuardTestCase):
@@ -59,13 +59,13 @@ class SameDocNumberTests(NetworkGuardTestCase):
     """
 
     def test_leading_zeros_are_ignored_for_numeric_numbers(self):
-        self.assertTrue(same_doc_number("2858374843", "4100200"))
-        self.assertTrue(same_doc_number("4100200", "2858374843"))
-        self.assertTrue(same_doc_number("2144527564", "10000"))
+        self.assertTrue(same_doc_number("0004100200", "4100200"))
+        self.assertTrue(same_doc_number("4100200", "0004100200"))
+        self.assertTrue(same_doc_number("00010000", "10000"))
 
     def test_different_numbers_stay_different(self):
         self.assertFalse(same_doc_number("2200111", "3300111"))
-        self.assertFalse(same_doc_number("2858374843", "4100201"))
+        self.assertFalse(same_doc_number("4582541781", "4100201"))
 
     def test_prefix_is_never_stripped(self):
         """У «УТ000001908» ведущая часть значима — трогать её нельзя."""
@@ -82,7 +82,7 @@ class SameDocNumberTests(NetworkGuardTestCase):
         self.assertFalse(same_doc_number("00A1", "A1"))
 
     def test_spacing_and_dashes_still_ignored(self):
-        self.assertTrue(same_doc_number(" 2858374843 ", "4100-200"))
+        self.assertTrue(same_doc_number(" 0004100200 ", "4100-200"))
 
     def test_empty_never_matches(self):
         for left, right in ((None, "1"), ("1", None), ("", "1"), ("   ", "1")):

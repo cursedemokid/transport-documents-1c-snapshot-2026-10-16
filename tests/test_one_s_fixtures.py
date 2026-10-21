@@ -111,7 +111,7 @@ class ReferenceFixtureTests(NetworkGuardTestCase):
         dirty = rows["ТД000000822"]["Контрагент"]
 
         self.assertEqual(dirty, "ВЕКТОР ООО (сверен на 31.12.2025)")
-        self.assertEqual(party_name_similarity(dirty, 'ООО «Пример»'), 1.0)
+        self.assertEqual(party_name_similarity(dirty, 'ООО «Вектор»'), 1.0)
 
 
 class ErrorFixtureTests(NetworkGuardTestCase):

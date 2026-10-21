@@ -50,11 +50,11 @@ class PysabyContractTests(NetworkGuardTestCase):
 
         self.assertEqual(["self", *REQUIRED_METHODS["_send_json_request"]], parameters)
 
-    def test_constructor_still_takes_login_and_REDACTED(self):
+    def test_constructor_still_takes_login_and_password(self):
         parameters = inspect.signature(self.manager_class.__init__).parameters
 
         self.assertIn("login", parameters)
-        self.assertIn("REDACTED", parameters)
+        self.assertIn("password", parameters)
 
     def test_session_file_path_is_an_instance_attribute(self):
         """На этом держится увод файла сессии из site-packages."""

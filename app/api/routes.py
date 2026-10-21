@@ -8,13 +8,13 @@ event loop, двух одновременных прогонов быть не �
 
 import logging
 import secrets
-import threading
 
 from fastapi import APIRouter, Header, HTTPException, Request
 
 from app.config import Settings
 from app.schemas.sync import SyncRunRequest
 from app.services.sync_service import SyncService
+from app.services.run_guard import RUN_LOCK
 
 logger = logging.getLogger(__name__)
 
@@ -23,7 +23,7 @@ router = APIRouter()
 #: Прогон читает и пишет общее состояние (state/sync_state.json, кэш заказов),
 #: поэтому параллельные запуски недопустимы. Блокировка неблокирующая: второй
 #: запрос должен получить внятный отказ, а не молча висеть до конца первого.
-_run_lock = threading.Lock()
+_run_lock = RUN_LOCK
 
 
 @router.get("/health", tags=["service"])

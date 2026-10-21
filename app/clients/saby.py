@@ -313,7 +313,7 @@ def _build_manager(manager_class: Any, settings: Settings) -> Any:
         try:
             manager = manager_class(
                 login=settings.saby_login,
-                REDACTED=settings.saby_REDACTED,
+                password=settings.saby_REDACTED,
             )
         finally:
             manager_class._init_db = original_init_db

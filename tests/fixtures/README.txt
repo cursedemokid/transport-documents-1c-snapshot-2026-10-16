@@ -1,0 +1,1 @@
+Synthetic response fixtures for portable tests. All names, IDs and amounts are examples; no production captures are included. Keep relationships between document numbers/IDs consistent when changing test data.

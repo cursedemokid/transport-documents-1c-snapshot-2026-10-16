@@ -358,8 +358,8 @@ class ReloadTests(NetworkGuardTestCase):
         repository.reload_additional_expense(expense)
 
         query = client.expense_queries[-1]
-        self.assertEqual(query.period_begin, date(2026, 8, 10) - timedelta(days=1))
-        self.assertEqual(query.period_end, date(2026, 8, 10) + timedelta(days=1))
+        self.assertEqual(query.period_begin, expense.date.date() - timedelta(days=1))
+        self.assertEqual(query.period_end, expense.date.date() + timedelta(days=1))
 
     def test_missing_document_returns_none(self):
         repository = _repository()

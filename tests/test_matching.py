@@ -86,7 +86,7 @@ class SignalTests(NetworkGuardTestCase):
 
     def test_dirty_counterparty_name_still_matches(self):
         """«ВЕКТОР ООО (сверен на 31.12.2025)» и «ООО «Пример»» — один контрагент."""
-        document = saby_doc(counterparty_name='ООО «Пример»')
+        document = saby_doc(counterparty_name='ООО «Вектор»')
 
         outcome = match_additional_expenses(document, [expense()], _config())
 
